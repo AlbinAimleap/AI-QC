@@ -1,0 +1,88 @@
+Checklists for AI Code Review and Error Prevention:
+
+Code Style and Structure:
+- Code follows PEP 8 style guidelines (proper indentation, line length, naming conventions)
+- Functions are single-purpose and follow SOLID principles
+- Variables and functions have clear, descriptive names
+- Code is properly modularized with clear separation of concerns
+- Comments explain complex logic and business rules
+- Type hints and docstrings are properly implemented
+
+Error Handling and Runtime Protection:
+- Try-except blocks catch specific exceptions rather than bare except
+- Custom exception classes for business logic errors
+- Proper cleanup in finally blocks
+- Resource management using context managers (with statements)
+- Timeout handling for external operations
+- Memory leak prevention in loops and data processing
+- Stack overflow protection in recursive functions
+- Dead lock prevention in threaded operations
+- Race condition handling in concurrent operations
+
+Input Validation and Security:
+- All user inputs are sanitized and validated
+- SQL injection prevention in database queries
+- Path traversal protection in file operations
+- Input size limits to prevent memory exhaustion
+- Type checking for function parameters
+- Boundary checking for array operations
+- Integer overflow protection
+- Floating-point precision handling
+- Character encoding validation
+- URL and file path validation
+
+Web Scraping and Network Operations:
+- Rate limiting with exponential backoff
+- Connection pooling and session management
+- Proper User-Agent and header configuration
+- Response status code handling (200, 300, 400, 500 series)
+- Network timeout and retry mechanisms
+- Proxy support with authentication if required
+- SSL/TLS certificate verification if required
+- Connection cleanup after use
+- Request queuing for concurrent operations
+
+Data Processing and Storage:
+- Data validation before processing
+- Null value handling in all operations
+- Data type conversion error handling
+- Buffer overflow prevention
+- File handle management and cleanup
+- Database connection pooling
+- Transaction management and rollback
+- Duplicate data detection and handling
+- Data integrity checks
+- Backup and recovery procedures
+
+Performance and Optimization:
+- Memory usage monitoring
+- CPU bound operation optimization
+- I/O operation efficiency
+- Cache implementation where appropriate
+- Lazy loading for large datasets
+- Batch processing for bulk operations
+- Index usage in database queries
+- Algorithm complexity analysis
+- Resource cleanup in error paths
+- Memory fragmentation prevention
+
+Testing and Debugging:
+- Unit tests for all business logic
+- Integration tests for external services
+- Edge case testing
+- Error condition simulation
+- Performance benchmarking
+- Logging for debugging and monitoring
+- Error reporting mechanism
+- Test coverage measurement
+- Regression testing
+- Load testing for scalability
+
+
+Maintenance:
+- Dependencies are listed with versions
+- Deployment procedures are documented
+- Monitoring and alerting setup
+- Scaling considerations
+- Maintenance procedures
+- Update and patch management

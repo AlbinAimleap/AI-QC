@@ -1,0 +1,52 @@
+Analyze the code and return a JSON report with quality control and validation results:
+{
+    "status": "success|error",
+    "message": "Analysis summary",
+    "metadata": {
+        "timestamp": "ISO timestamp",
+        "version": "analyzer version",
+        "execution_time": "time in ms"
+    },
+    "checks": {
+        "code_issues": [
+            {
+                "line": "line_number",
+                "severity": "critical|warning|info",
+                "message": "Issue description",
+                "error_code": "code snippet",
+                "fix": "fix for the issue",
+                "code": "fixed code snippet",
+                "category": "syntax|logic|security|performance"
+            }
+        ],
+        "quality_issues": [
+            {
+                "issue": "quality issue",
+                "severity": "high|medium|low",
+                "fix": "fix for the issues",
+                "code": "code snippet",
+                "impact": "description of the impact",
+                "best_practice": "reference to best practice"
+            }
+        ],
+        "metrics": {
+            "complexity": "cyclomatic complexity score",
+            "maintainability": "maintainability index",
+            "test_coverage": "percentage",
+            "duplication": "percentage of duplicate code"
+        }
+    }
+}
+
+Perform the following checks using {{checklist}}:
+1. Code syntax validation
+2. Error detection
+3. Quality assessment
+4. Security vulnerabilities
+5. Performance optimization
+6. Best practices compliance
+
+Note:
+- status: success if the code is valid, error if there are issues
+- severity levels indicate the urgency of addressing the issue
+- metrics provide quantitative measures of code quality
