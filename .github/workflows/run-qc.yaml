@@ -1,4 +1,5 @@
-name: AWS Credentials Setup
+name: QC-AI Test 
+run-name: QC-AI Test || ${{ github.event.inputs.branch }}
 
 on:
   workflow_dispatch:
