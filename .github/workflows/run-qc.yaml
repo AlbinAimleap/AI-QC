@@ -1,0 +1,75 @@
+name: QC-AI Test
+run-name: QC-AI Test || ${{ github.event.inputs.branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to Run"
+        required: true
+        default: "main"
+      code_file:
+        description: "What is your code file name? (without spaces, lowercase)"
+        required: true
+        default: "your_code"
+      prompt_file:
+        description: "What is your prompt file name? (without spaces, lowercase)"
+        required: false
+        default: ""
+      checklist_file:
+        description: "What is your checklist file name? (without spaces, lowercase)"
+        required: false
+        default: ""
+
+jobs:
+  setup-aws-credentials:
+    runs-on: ubuntu-24.04 
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch }}
+
+    - name: Set AWS Credentials
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+
+    - name: Install AWS CLI
+      run: |
+        # Install AWS CLI using Snap
+        sudo snap install aws-cli --classic
+        aws --version 
+
+    - name: Install Python Dependencies
+      run: |
+        # Install Python dependencies
+        python3 -m pip install --upgrade pip
+        pip install boto3 python-dotenv
+
+    - name: Run QC Script
+      run: |
+        ls -l .
+        CODE_FILE="${{ github.event.inputs.code_file }}.py"
+        PROMPT_FILE=${{ github.event.inputs.prompt_file }}
+        CHECKLIST_FILE=${{ github.event.inputs.checklist_file }}"
+        OUTPUT_FILE="qc_output.log"
+
+        if [[ -z "$PROMPT_FILE" && -z "$CHECKLIST_FILE" ]]; then
+          echo "Running basic QC with context file: $CODE_FILE"
+          python qc.py --context "$CODE_FILE" > "$OUTPUT_FILE" 2>&1
+        else
+          PROMPT_FILE="${PROMPT_FILE}.txt"
+          CHECKLIST_FILE="${CHECKLIST_FILE}.txt"
+          echo "Running QC with context: $CODE_FILE, prompt: $PROMPT_FILE, checklist: $CHECKLIST_FILE"
+          python qc.py --context "$CODE_FILE" --prompt "$PROMPT_FILE" --checklist "$CHECKLIST_FILE" > "$OUTPUT_FILE" 2>&1
+        fi
+
+    - name: Display QC Output
+      run: |
+        echo "==== QC Script Output ===="
+        cat qc_output.log
