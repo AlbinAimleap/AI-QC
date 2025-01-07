@@ -53,6 +53,7 @@ jobs:
 
     - name: Run QC Script
       run: |
+        ls -l .
         CODE_FILE="${{ github.event.inputs.code_file }}.py"
         PROMPT_FILE=${{ github.event.inputs.prompt_file }}
         CHECKLIST_FILE=${{ github.event.inputs.checklist_file }}"
