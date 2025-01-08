@@ -47,6 +47,6 @@ Perform the following checks using {{checklist}}:
 6. Best practices compliance
 
 Note:
-- status: success if the code is valid, error if there are issues
+- status: success if the code is valid, error if there are issues (critical issues)
 - severity levels indicate the urgency of addressing the issue
 - metrics provide quantitative measures of code quality
