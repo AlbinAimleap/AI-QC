@@ -20,6 +20,9 @@ on:
         description: "What is your checklist file name? (without spaces, lowercase)"
         required: false
         default: ""
+  repository_dispatch:
+    types:
+      - trigger-qc-test
 
 jobs:
   setup-aws-credentials:
