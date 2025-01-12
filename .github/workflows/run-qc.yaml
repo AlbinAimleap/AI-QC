@@ -76,3 +76,20 @@ jobs:
       run: |
         echo "==== QC Script Output ===="
         cat qc_output.log
+
+    - name: Create GitHub Issue on Error
+      if: ${{ always() }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if grep -q '"status": "error"' qc_output.log; then
+          echo "Error detected, creating GitHub issue..."
+
+          # Prepare issue content
+          ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
+          ISSUE_BODY=$(cat qc_output.log)
+
+          # Use GitHub CLI to create an issue
+          gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ${{ github.repository }}
+        else
+          echo "No error detected, skipping issue creation."
