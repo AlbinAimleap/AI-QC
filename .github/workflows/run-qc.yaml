@@ -93,3 +93,4 @@ jobs:
           gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ${{ github.repository }}
         else
           echo "No error detected, skipping issue creation."
+        fi
