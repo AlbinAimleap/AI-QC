@@ -83,8 +83,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
           # Check for error status in QC output
-          if grep -q '"status": "error"' qc_output.log
-          then
+          if grep -q '"status": "error"' qc_output.log; then
             echo "Error detected, creating GitHub issue..."
 
             # Create issue title and body
