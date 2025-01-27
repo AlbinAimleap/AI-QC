@@ -9,7 +9,7 @@ from functools import lru_cache
 from concurrent.futures import ThreadPoolExecutor
 import threading
 
-T = TypeVar("T", bound="PromoProcessor"
+T = TypeVar("T", bound="PromoProcessor
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
