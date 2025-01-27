@@ -1,6 +1,6 @@
 Analyze the code and return a JSON report with quality control and validation results:
 {
-    "status": "success|error",
+    "status": "success|error <error if there is an error the code>",
     "message": "Analysis summary",
     "metadata": {
         "timestamp": "ISO timestamp",

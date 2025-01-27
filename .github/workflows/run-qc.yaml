@@ -82,15 +82,19 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        if grep -q '"status": "error"' qc_output.log; then
-          echo "Error detected, creating GitHub issue..."
+          # Check for error status in QC output
+          if grep -q '"status": "error"' qc_output.log; then
+            echo "Error detected, creating GitHub issue..."
 
-          # Prepare issue content
-          ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
-          ISSUE_BODY=$(cat qc_output.log)
+            # Create issue title and body
+            ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
+            ISSUE_BODY=$(cat qc_output.log)
 
-          # Use GitHub CLI to create an issue
-          gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ${{ github.repository }}
-        else
-          echo "No error detected, skipping issue creation."
-        fi
+            # Create GitHub issue using gh CLI
+            gh issue create \
+              --title "$ISSUE_TITLE" \
+              --body "$ISSUE_BODY" \
+              --repo ${{ github.repository }}
+          else
+            echo "No error detected, skipping issue creation."
+          fi
