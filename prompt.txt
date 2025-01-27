@@ -1,6 +1,6 @@
 Analyze the code and return a JSON report with quality control and validation results:
 {
-    "status": "success|error <error if there is an error the code>",
+    "status": "success|error <error if there are any code_issues or quality_issues>",
     "message": "Analysis summary",
     "metadata": {
         "timestamp": "ISO timestamp",
@@ -47,6 +47,6 @@ Perform the following checks using {{checklist}}:
 6. Best practices compliance
 
 Note:
-- status: success if the code is valid, error if there are issues
+- status: success if no code_issues and quality_issues are found, error if any issues exist
 - severity levels indicate the urgency of addressing the issue
 - metrics provide quantitative measures of code quality
