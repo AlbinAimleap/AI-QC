@@ -84,16 +84,43 @@ jobs:
       run: |
         # Check for error status in QC output
         if grep -q '"status": "error"' qc_output.log; then
-          echo "Error detected, creating GitHub issue..."
+          echo "Error detected, parsing output and creating GitHub issue..."
 
-          # Create issue title and body
+          # Read and parse the JSON log
           ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
-          ISSUE_BODY=$(cat qc_output.log)
+          QC_OUTPUT=$(cat qc_output.log)
+
+          # Parse the JSON for code and quality issues
+          MARKDOWN_BODY=$(jq -r '
+            [
+              (
+                "## Code Issues\n\n" +
+                (.checks.code_issues[] | 
+                  "**Line:** \( .line )  \n" +
+                  "**Severity:** \( .severity )  \n" +
+                  "**Message:** \( .message )  \n" +
+                  "**Error Code:** ```\( .error_code )```  \n" +
+                  "**Fix:** ```\( .fix )```  \n" +
+                  "**Category:** \( .category )\n\n"
+                )
+              ) // "No Code Issues Found.\n\n",
+              (
+                "## Quality Issues\n\n" +
+                (.checks.quality_issues[] | 
+                  "**Issue:** \( .issue )  \n" +
+                  "**Severity:** \( .severity )  \n" +
+                  "**Impact:** \( .impact )  \n" +
+                  "**Best Practice:** \( .best_practice )  \n" +
+                  "**Fix:** ```\( .fix )```  \n\n"
+                )
+              ) // "No Quality Issues Found.\n\n"
+            ] | join("\n")
+          ' <<< "$QC_OUTPUT")
 
           # Create GitHub issue using gh CLI
           gh issue create \
             --title "$ISSUE_TITLE" \
-            --body "$ISSUE_BODY" \
+            --body "$MARKDOWN_BODY" \
             --repo "${{ github.repository }}"
         else
           echo "No error detected, skipping issue creation."
