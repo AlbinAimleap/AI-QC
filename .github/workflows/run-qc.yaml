@@ -92,31 +92,37 @@ jobs:
           ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
           QC_OUTPUT=$(cat qc_output.log)
 
-          # Parse the JSON for code and quality issues
-          MARKDOWN_BODY=$(jq -r '
-            [
-              (
-                "## Code Issues\n\n" +
-                (.checks.code_issues[] | 
-                  "**Line:** \( .line )  \n" +
-                  "**Severity:** \( .severity )  \n" +
-                  "**Message:** \( .message )  \n" +
-                  "**Error Code:** ```\( .error_code )```  \n" +
-                  "**Fix:** ```\( .fix )```  \n" +
-                  "**Category:** \( .category )\n\n"
-                )
-              ) // "No Code Issues Found.\n\n",
-              (
-                "## Quality Issues\n\n" +
-                (.checks.quality_issues[] | 
-                  "**Issue:** \( .issue )  \n" +
-                  "**Severity:** \( .severity )  \n" +
-                  "**Impact:** \( .impact )  \n" +
-                  "**Best Practice:** \( .best_practice )  \n" +
-                  "**Fix:** ```\( .fix )```  \n\n"
-                )
-              ) // "No Quality Issues Found.\n\n"
-            ] | join("\n")
+          # Parse the JSON for code and quality issues, with error handling
+          MARKDOWN_BODY=$(jq -r --raw-input --slurp '
+            if (.|length > 0) then
+              try (
+                fromjson | [
+                  (
+                    "## Code Issues\n\n" +
+                    (.checks.code_issues[] | 
+                      "**Line:** \( .line )  \n" +
+                      "**Severity:** \( .severity )  \n" +
+                      "**Message:** \( .message )  \n" +
+                      "**Error Code:** \( .error_code )  \n" +
+                      "**Fix:** \( .fix )  \n" +
+                      "**Category:** \( .category )\n\n"
+                    )
+                  ) // "No Code Issues Found.\n\n",
+                  (
+                    "## Quality Issues\n\n" +
+                    (.checks.quality_issues[] | 
+                      "**Issue:** \( .issue )  \n" +
+                      "**Severity:** \( .severity )  \n" +
+                      "**Impact:** \( .impact )  \n" +
+                      "**Best Practice:** \( .best_practice )  \n" +
+                      "**Fix:** \( .fix )  \n\n"
+                    )
+                  ) // "No Quality Issues Found.\n\n"
+                ] | join("\n")
+              ) catch "Error parsing QC output. Raw output:\n\n\n\(.)\n"
+            else
+              "No output found in QC log"
+            end
           ' <<< "$QC_OUTPUT")
 
             # Create GitHub issue for each file
