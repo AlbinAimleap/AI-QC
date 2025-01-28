@@ -7,7 +7,7 @@ Analyze the code and return a markdown report with quality control and validatio
 - **Message**: Analysis summary
 
 ## Metadata
-- **Timestamp**: ISO timestamp
+- **File**: File name
 - **Version**: analyzer version
 - **Execution Time**: time in ms
 
