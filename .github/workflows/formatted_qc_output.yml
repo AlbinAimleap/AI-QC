@@ -85,7 +85,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # Check for error status in QC output
-        if grep -q '"status": "error"' qc_output.log || grep -q '**Status**: error' qc_output.log; then
+        if grep -q '"status": "error"' qc_output.log || grep -q '**Status**: error' qc_output.log || grep -q '\*\*Status\*\*: error' qc_output.log; then
           echo "Error detected, parsing output and creating GitHub issues..."
 
           # Read the QC output
