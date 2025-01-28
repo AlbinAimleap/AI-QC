@@ -22,7 +22,7 @@ class BedrockTextGenerator:
         if context:
             with open(context, 'r') as file:
                 context_content = file.read()
-            full_prompt = f"Context:\n{context_content}\n\nPrompt: {prompt}"
+            full_prompt = f"Context:\n{context_content}\n\nfilename:{context}\n\nPrompt: {prompt}"
         else:
             full_prompt = prompt
         return full_prompt
