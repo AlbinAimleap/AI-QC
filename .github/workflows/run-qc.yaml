@@ -88,22 +88,23 @@ jobs:
 
           # Read and parse the JSON log
           ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
-          QC_OUTPUT=$(cat qc_output.log)
+          QC_OUTPUT=$(cat qc_output.log | tr -d '\r' | awk -v RS='--+' 'NR>1{print $0}' | grep -v '^[[:space:]]*$')
 
           # Parse the JSON for code and quality issues
-          MARKDOWN_BODY=$(jq -r '
-            [
+          MARKDOWN_BODY=$(echo "$QC_OUTPUT" | jq -s '
+            . | map(
+              "## Analysis Report " + (.metadata.timestamp | sub("T"; " ") | sub("Z"; " UTC")) + "\n\n" +
               (
                 "## Code Issues\n\n" +
                 (.checks.code_issues[] | 
                   "**Line:** \( .line )  \n" +
                   "**Severity:** \( .severity )  \n" +
                   "**Message:** \( .message )  \n" +
-                  "**Error Code:** ```\( .error_code )```  \n" +
-                  "**Fix:** ```\( .fix )```  \n" +
+                  "**Error Code:** \( .error_code )  \n" +
+                  "**Fix:** \( .fix )  \n" +
                   "**Category:** \( .category )\n\n"
                 )
-              ) // "No Code Issues Found.\n\n",
+              ) // "No Code Issues Found.\n\n" +
               (
                 "## Quality Issues\n\n" +
                 (.checks.quality_issues[] | 
@@ -111,11 +112,16 @@ jobs:
                   "**Severity:** \( .severity )  \n" +
                   "**Impact:** \( .impact )  \n" +
                   "**Best Practice:** \( .best_practice )  \n" +
-                  "**Fix:** ```\( .fix )```  \n\n"
+                  "**Fix:** \( .fix )  \n\n"
                 )
-              ) // "No Quality Issues Found.\n\n"
-            ] | join("\n")
-          ' <<< "$QC_OUTPUT")
+              ) // "No Quality Issues Found.\n\n" +
+              "## Metrics\n\n" +
+              "- Complexity: \( .checks.metrics.complexity )\n" +
+              "- Maintainability: \( .checks.metrics.maintainability )\n" +
+              "- Test Coverage: \( .checks.metrics.test_coverage )\n" +
+              "- Duplication: \( .checks.metrics.duplication )\n"
+            ) | join("\n---\n\n")
+          ')
 
           # Create GitHub issue using gh CLI
           gh issue create \
