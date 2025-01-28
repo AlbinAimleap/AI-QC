@@ -124,7 +124,6 @@ jobs:
               --title "$ISSUE_TITLE" \
               --body "$MARKDOWN_BODY" \
               --repo "${{ github.repository }}"
-          done
         else
           echo "No error detected, skipping issue creation."
         fi
