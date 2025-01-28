@@ -50,3 +50,4 @@ Note:
 - status: success if no code_issues and quality_issues are found, error if any issues exist
 - severity levels indicate the urgency of addressing the issue
 - metrics provide quantitative measures of code quality
+- NO COMMENTS OR EXPLANATIONS, ONLY THE JSON RESPONSE

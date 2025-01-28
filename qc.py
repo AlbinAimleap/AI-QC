@@ -66,7 +66,7 @@ class QualityChecker:
 
     def argument_parser(self):
         parser = argparse.ArgumentParser(description="QC code using Bedrock.")
-        parser.add_argument("--context", type=str, help="The context file to use.")
+        parser.add_argument("--context", nargs='+', type=str, help="The context files to use.")
         parser.add_argument("--prompt", type=str, help="The prompt to generate text for.", default="prompt.txt")
         parser.add_argument("--checklist", type=str, help="The context file to use.", default="checklist.txt")
         return parser.parse_args()
@@ -74,9 +74,12 @@ class QualityChecker:
     def run(self):
         args = self.argument_parser()
         prompt = self.generator.load_prompt(args.prompt, args.checklist)
-        response = self.generator.generate_text(prompt, args.context)
-        if response:
-            print(response)
+        
+        for context_file in args.context:
+            response = self.generator.generate_text(prompt, context_file)
+            if response:
+                print(response)
+            print("-" * 50)
 
 if __name__ == "__main__":
     qc = QualityChecker()
