@@ -94,7 +94,7 @@ jobs:
 
           # Extract sections from the output
           # Format the body
-          MARKDOWN_BODY="# QC Analysis Report
+          MARKDOWN_BODY="
           $QC_OUTPUT"
 
           # Create GitHub issue
