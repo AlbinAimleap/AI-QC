@@ -93,17 +93,9 @@ jobs:
           ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
 
           # Extract sections from the output
-          METADATA=$(echo "$QC_OUTPUT" | awk '/## Metadata/,/## Code Issues/' | grep -v "## Code Issues")
-          CODE_ISSUES=$(echo "$QC_OUTPUT" | awk '/## Code Issues/,/## Quality Issues/' | grep -v "## Quality Issues")
-          QUALITY_ISSUES=$(echo "$QC_OUTPUT" | awk '/## Quality Issues/,/## Metrics/' | grep -v "## Metrics")
-          METRICS=$(echo "$QC_OUTPUT" | awk '/## Metrics/,/EOF/')
-
           # Format the body
           MARKDOWN_BODY="# QC Analysis Report
-          $METADATA
-          $CODE_ISSUES
-          $QUALITY_ISSUES
-          $METRICS"
+          $QC_OUTPUT"
 
           # Create GitHub issue
           gh issue create \
