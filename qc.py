@@ -38,8 +38,7 @@ class BedrockTextGenerator:
                         {"role": "user", "content": constructed_prompt}
                     ],
                     "max_tokens": max_tokens,
-                    "temperature": 0.3,
-                    "top_p": 0.9
+                    "temperature": 0.3
                 })
             )
             
