@@ -1,42 +1,31 @@
-Analyze the code and return a JSON report with quality control and validation results:
-{
-    "status": "success|error <error if there are any code_issues or quality_issues>",
-    "message": "Analysis summary",
-    "metadata": {
-        "timestamp": "ISO timestamp",
-        "version": "analyzer version",
-        "execution_time": "time in ms"
-    },
-    "checks": {
-        "code_issues": [
-            {
-                "line": "line_number",
-                "severity": "critical|warning|info",
-                "message": "Issue description",
-                "error_code": "code snippet",
-                "fix": "fix for the issue",
-                "code": "fixed code snippet",
-                "category": "syntax|logic|security|performance"
-            }
-        ],
-        "quality_issues": [
-            {
-                "issue": "quality issue",
-                "severity": "high|medium|low",
-                "fix": "fix for the issues",
-                "code": "code snippet",
-                "impact": "description of the impact",
-                "best_practice": "reference to best practice"
-            }
-        ],
-        "metrics": {
-            "complexity": "cyclomatic complexity score",
-            "maintainability": "maintainability index",
-            "test_coverage": "percentage",
-            "duplication": "percentage of duplicate code"
-        }
-    }
-}
+Analyze the code and return a markdown report with quality control and validation results:
+
+# Code Analysis Report
+
+## Status
+- **Status**: `success|error <error if there are any code_issues or quality_issues>`
+- **Message**: Analysis summary
+
+## Metadata
+- **Timestamp**: ISO timestamp
+- **Version**: analyzer version
+- **Execution Time**: time in ms
+
+## Code Issues
+| Line | Severity | Message | Error Code | Fix | Code | Category |
+|------|----------|---------|------------|-----|------|----------|
+| line_number | critical/warning/info | Issue description | code snippet | fix for the issue | fixed code snippet | syntax/logic/security/performance |
+
+## Quality Issues
+| Issue | Severity | Fix | Code | Impact | Best Practice |
+|-------|----------|-----|------|---------|---------------|
+| quality issue | high/medium/low | fix for the issues | code snippet | description of the impact | reference to best practice |
+
+## Metrics
+- **Complexity**: cyclomatic complexity score
+- **Maintainability**: maintainability index
+- **Test Coverage**: percentage
+- **Duplication**: percentage of duplicate code
 
 Perform the following checks using {{checklist}}:
 1. Code syntax validation
@@ -50,4 +39,4 @@ Note:
 - status: success if no code_issues and quality_issues are found, error if any issues exist
 - severity levels indicate the urgency of addressing the issue
 - metrics provide quantitative measures of code quality
-- NO COMMENTS OR EXPLANATIONS, ONLY THE JSON RESPONSE
+- NO COMMENTS OR EXPLANATIONS, ONLY THE MARKDOWN RESPONSE
