@@ -95,6 +95,7 @@ jobs:
           # Extract sections from the output
           # Format the body
           MARKDOWN_BODY="
+          Developer: ${{ github.actor }}
           $QC_OUTPUT"
 
           # Create GitHub issue
