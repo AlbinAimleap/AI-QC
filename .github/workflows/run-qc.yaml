@@ -89,49 +89,35 @@ jobs:
           echo "Error detected, parsing output and creating GitHub issues..."
 
           # Read and parse the JSON log
-          QC_OUTPUT=$(cat qc_output.log | tr -d '\r' | awk -v RS='--+' 'NR>1{print $0}' | grep -v '^[[:space:]]*')
+          ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }}"
+          QC_OUTPUT=$(cat qc_output.log)
 
-          # Create separate issues for each file
-          echo "$QC_OUTPUT" | jq -c '. | select(.status == "error")' | while read -r file_data; do
-            FILE_NAME=$(echo "$file_data" | jq -r '.file_name')
-            ISSUE_TITLE="${{ github.workflow }} || ${{ github.event.inputs.branch }} || $FILE_NAME"
-            
-            MARKDOWN_BODY=$(echo "$file_data" | jq -r '
-              "# Analysis Report for " + .file_name + "\n\n" +
-              "## Analysis Report " + (.metadata.timestamp | sub("T"; " ") | sub("Z"; " UTC")) + "\n\n" +
-              if (.checks.code_issues | length > 0) then
+          # Parse the JSON for code and quality issues
+          MARKDOWN_BODY=$(jq -r '
+            [
+              (
                 "## Code Issues\n\n" +
-                (.checks.code_issues | to_entries | map(
-                  "### Issue " + (.key + 1 | tostring) + "\n\n" +
-                  "**Line:** \( .value.line )  \n" +
-                  "**Severity:** \( .value.severity )  \n" +
-                  "**Message:** \( .value.message )  \n" +
-                  "**Error Code:** \( .value.error_code )  \n" +
-                  "**Fix:** \( .value.fix )  \n" +
-                  "**Category:** \( .value.category )\n\n"
-                ) | join(""))
-              else
-                "## Code Issues\n\nNo Code Issues Found.\n\n"
-              end +
-              if (.checks.quality_issues | length > 0) then
+                (.checks.code_issues[] | 
+                  "**Line:** \( .line )  \n" +
+                  "**Severity:** \( .severity )  \n" +
+                  "**Message:** \( .message )  \n" +
+                  "**Error Code:** ```\( .error_code )```  \n" +
+                  "**Fix:** ```\( .fix )```  \n" +
+                  "**Category:** \( .category )\n\n"
+                )
+              ) // "No Code Issues Found.\n\n",
+              (
                 "## Quality Issues\n\n" +
-                (.checks.quality_issues | to_entries | map(
-                  "### Issue " + (.key + 1 | tostring) + "\n\n" +
-                  "**Issue:** \( .value.issue )  \n" +
-                  "**Severity:** \( .value.severity )  \n" +
-                  "**Impact:** \( .value.impact )  \n" +
-                  "**Best Practice:** \( .value.best_practice )  \n" +
-                  "**Fix:** \( .value.fix )\n\n"
-                ) | join(""))
-              else
-                "## Quality Issues\n\nNo Quality Issues Found.\n\n"
-              end +
-              "## Metrics\n\n" +
-              "- Complexity: \( .checks.metrics.complexity )\n" +
-              "- Maintainability: \( .checks.metrics.maintainability )\n" +
-              "- Test Coverage: \( .checks.metrics.test_coverage )\n" +
-              "- Duplication: \( .checks.metrics.duplication )\n"
-            ')
+                (.checks.quality_issues[] | 
+                  "**Issue:** \( .issue )  \n" +
+                  "**Severity:** \( .severity )  \n" +
+                  "**Impact:** \( .impact )  \n" +
+                  "**Best Practice:** \( .best_practice )  \n" +
+                  "**Fix:** ```\( .fix )```  \n\n"
+                )
+              ) // "No Quality Issues Found.\n\n"
+            ] | join("\n")
+          ' <<< "$QC_OUTPUT")
 
             # Create GitHub issue for each file
             gh issue create \
