@@ -95,28 +95,35 @@ jobs:
           # Parse the JSON for code and quality issues
           MARKDOWN_BODY=$(echo "$QC_OUTPUT" | jq -s '
             . | map(
+              "# " + .file_name + "\n\n" +
               "## Analysis Report " + (.metadata.timestamp | sub("T"; " ") | sub("Z"; " UTC")) + "\n\n" +
-              (
+              if (.checks.code_issues | length > 0) then
                 "## Code Issues\n\n" +
-                (.checks.code_issues[] | 
-                  "**Line:** \( .line )  \n" +
-                  "**Severity:** \( .severity )  \n" +
-                  "**Message:** \( .message )  \n" +
-                  "**Error Code:** \( .error_code )  \n" +
-                  "**Fix:** \( .fix )  \n" +
-                  "**Category:** \( .category )\n\n"
-                )
-              ) // "No Code Issues Found.\n\n" +
-              (
+                (.checks.code_issues | to_entries | map(
+                  "### Issue " + (.key + 1 | tostring) + "\n\n" +
+                  "**Line:** \( .value.line )  \n" +
+                  "**Severity:** \( .value.severity )  \n" +
+                  "**Message:** \( .value.message )  \n" +
+                  "**Error Code:** \( .value.error_code )  \n" +
+                  "**Fix:** \( .value.fix )  \n" +
+                  "**Category:** \( .value.category )\n\n"
+                ) | join(""))
+              else
+                "## Code Issues\n\nNo Code Issues Found.\n\n"
+              end +
+              if (.checks.quality_issues | length > 0) then
                 "## Quality Issues\n\n" +
-                (.checks.quality_issues[] | 
-                  "**Issue:** \( .issue )  \n" +
-                  "**Severity:** \( .severity )  \n" +
-                  "**Impact:** \( .impact )  \n" +
-                  "**Best Practice:** \( .best_practice )  \n" +
-                  "**Fix:** \( .fix )  \n\n"
-                )
-              ) // "No Quality Issues Found.\n\n" +
+                (.checks.quality_issues | to_entries | map(
+                  "### Issue " + (.key + 1 | tostring) + "\n\n" +
+                  "**Issue:** \( .value.issue )  \n" +
+                  "**Severity:** \( .value.severity )  \n" +
+                  "**Impact:** \( .value.impact )  \n" +
+                  "**Best Practice:** \( .value.best_practice )  \n" +
+                  "**Fix:** \( .value.fix )\n\n"
+                ) | join(""))
+              else
+                "## Quality Issues\n\nNo Quality Issues Found.\n\n"
+              end +
               "## Metrics\n\n" +
               "- Complexity: \( .checks.metrics.complexity )\n" +
               "- Maintainability: \( .checks.metrics.maintainability )\n" +
