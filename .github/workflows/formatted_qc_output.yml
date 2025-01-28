@@ -1,4 +1,4 @@
-name: QC-AI Test
+name: Formatted Output
 run-name: QC-AI Test || ${{ github.event.inputs.branch }}
 
 on:
