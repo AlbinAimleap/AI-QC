@@ -57,21 +57,23 @@ jobs:
     - name: Run QC Script
       run: |
         ls -l .
-        CODE_FILE="${{ github.event.inputs.code_file }}.py"
+        CODE_FILES="${{ github.event.inputs.code_file }}"
         PROMPT_FILE="${{ github.event.inputs.prompt_file }}"
         CHECKLIST_FILE="${{ github.event.inputs.checklist_file }}"
         OUTPUT_FILE="qc_output.log"
 
+        # Convert comma-separated code files to space-separated and append .py
+        CONTEXT_FILES=$(echo "$CODE_FILES" | tr ',' ' ' | sed 's/\([^ ]*\)/\1.py/g')
+
         if [[ -z "$PROMPT_FILE" && -z "$CHECKLIST_FILE" ]]; then
-          echo "Running basic QC with context file: $CODE_FILE"
-          python qc.py --context "$CODE_FILE" > "$OUTPUT_FILE" 2>&1
+          echo "Running basic QC with context files: $CONTEXT_FILES"
+          python qc.py --context $CONTEXT_FILES > "$OUTPUT_FILE" 2>&1
         else
           PROMPT_FILE="${PROMPT_FILE}.txt"
           CHECKLIST_FILE="${CHECKLIST_FILE}.txt"
-          echo "Running QC with context: $CODE_FILE, prompt: $PROMPT_FILE, checklist: $CHECKLIST_FILE"
-          python qc.py --context "$CODE_FILE" --prompt "$PROMPT_FILE" --checklist "$CHECKLIST_FILE" > "$OUTPUT_FILE" 2>&1
+          echo "Running QC with context: $CONTEXT_FILES, prompt: $PROMPT_FILE, checklist: $CHECKLIST_FILE"
+          python qc.py --context $CONTEXT_FILES --prompt "$PROMPT_FILE" --checklist "$CHECKLIST_FILE" > "$OUTPUT_FILE" 2>&1
         fi
-
     - name: Display QC Output
       run: |
         echo "==== QC Script Output ===="
