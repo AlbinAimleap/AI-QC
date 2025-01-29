@@ -30,7 +30,7 @@ This tool performs automated code quality control and validation checks using AW
 
 Basic usage:
 ```bash
-python qc.py --context your_code.py
+python qc.py --context your_code.py   ####
 ```
 
 
