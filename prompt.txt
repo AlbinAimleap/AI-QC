@@ -1,5 +1,5 @@
-Analyze the code and return a markdown report with quality control and validation results:
-
+Perform comprehensive quality control on any code file by validating syntax, detecting errors, assessing overall quality, identifying security vulnerabilities, optimizing performance, and verifying best practices compliance, and then output a detailed markdown report that includes metadata (file name, analyzer version, execution time), tables for code issues (with columns for line, severity, message, error code, fix, fixed code snippet, and category) and quality issues (detailing issue, severity, fix, code snippet, impact, and best practice), along with metrics such as cyclomatic complexity, maintainability index, test coverage, and duplication percentage, setting the status as "success" if no issues are found or "error" if any issues exist and return a markdown report with quality control and validation results:
+`**Status**:` SHOULD BE 'ERROR' IF ANY ISSUES ARE FOUND, 'SUCCESS' IF NO ISSUES ARE FOUND
 # Code Analysis Report
 
 ## Status

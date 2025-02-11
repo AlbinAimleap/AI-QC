@@ -38,7 +38,7 @@ class BedrockTextGenerator:
                         {"role": "user", "content": constructed_prompt}
                     ],
                     "max_tokens": max_tokens,
-                    "temperature": 0.3
+                    "temperature": 0.0
                 })
             )
             
@@ -48,7 +48,8 @@ class BedrockTextGenerator:
         except Exception as e:
             print(f"Error generating text: {str(e)}")
             return None
-
+        
+        
     def load_prompt(self, prompt_file, checklist_file):
         prompt_file_path = Path(prompt_file)
         checklist = Path(checklist_file)
